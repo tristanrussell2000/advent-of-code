@@ -12,19 +12,19 @@ let rec valid sign list =
                               if ((abs diff) >= 1 && (abs diff) <= 3) && (sign = 0 || sign = (compare diff 0))
                               then valid (compare first second) (second :: rest)
                               else false
-let rec validish sign backtrack list =
+let rec validish sign is_backtrack list =
   match list with
     | [] -> false
     | _ :: [] -> true
     | first :: second :: rest -> let diff = first - second in
                               if (((abs diff) >= 1 && (abs diff) <= 3) && (sign = 0 || sign = (compare first second))) || first = 0
-                              then match (validish (if first = 0 then sign else (compare first second)) backtrack (second :: rest)) with
+                              then match (validish (if first = 0 then sign else (compare first second)) is_backtrack (second :: rest)) with
                                 | true -> true 
                                 | false -> 
-                                  if not backtrack 
+                                  if not is_backtrack 
                                   then validish sign true (first :: rest) 
                                   else false
-                              else (if backtrack then false else (validish sign true (first::rest)))
+                              else (if is_backtrack then false else (validish sign true (first::rest)))
                                                        
 let () = 
   let lines = read_lines file in
