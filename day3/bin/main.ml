@@ -55,7 +55,6 @@ let () =
   let nums_advanced = search_nums equations_advanced in
   let totals_advanced = List.map (fun (x, y) -> x * y) nums_advanced in
   let total_advanced = List.fold_left (+) 0 totals_advanced in
-  List.iter print_endline equations_advanced;
 
   print_endline ("Total: " ^ string_of_int total);
   print_endline ("Total advanced: " ^ string_of_int total_advanced);
