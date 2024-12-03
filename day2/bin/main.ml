@@ -18,7 +18,7 @@ let rec validish sign backtrack list =
     | _ :: [] -> true
     | first :: second :: rest -> let diff = first - second in
                               if (((abs diff) >= 1 && (abs diff) <= 3) && (sign = 0 || sign = (compare first second))) || first = 0
-                              then match (validish (if (sign <> 0 || first = 0) then sign else (compare first second)) backtrack (second :: rest)) with
+                              then match (validish (if first = 0 then sign else (compare first second)) backtrack (second :: rest)) with
                                 | true -> true 
                                 | false -> 
                                   if not backtrack 
