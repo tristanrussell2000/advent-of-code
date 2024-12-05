@@ -6,52 +6,46 @@ let read_lines file =
 
 let int_of_bool b = if b then 1 else 0
 let vertical xmas_array i j =
-  try
+  (i+3) < Array.length xmas_array &&
   xmas_array.(i).(j) = 'X' &&
   xmas_array.(i+1).(j) = 'M' &&
   xmas_array.(i+2).(j) = 'A' &&
   xmas_array.(i+3).(j) = 'S'
-  with Invalid_argument _ -> false
 
 let inverse_vertical xmas_array i j =
-  try
+  (i-3) >= 0 &&
     xmas_array.(i).(j) = 'X' &&
     xmas_array.(i-1).(j) = 'M' &&
     xmas_array.(i-2).(j) = 'A' &&
     xmas_array.(i-3).(j) = 'S'
-  with Invalid_argument _-> false
 
 let horizontal xmas_array i j =
-  try
+  (j+3) < Array.length xmas_array.(0) &&
     xmas_array.(i).(j) = 'X' &&
     xmas_array.(i).(j+1) = 'M' &&
     xmas_array.(i).(j+2) = 'A' &&
     xmas_array.(i).(j+3) = 'S'
-  with Invalid_argument _ -> false
 
 let inverse_horizontal xmas_array i j =
-  try
+  (j-3) >= 0 &&
     xmas_array.(i).(j) = 'X' &&
     xmas_array.(i).(j-1) = 'M' &&
     xmas_array.(i).(j-2) = 'A' &&
     xmas_array.(i).(j-3) = 'S'
-  with Invalid_argument _ -> false
 
 let up_right_diag xmas_array i j =
-  try
+  (i-3) >= 0 && (j+3) < Array.length xmas_array.(0) &&
     xmas_array.(i).(j) = 'X' &&
     xmas_array.(i-1).(j+1) = 'M' &&
     xmas_array.(i-2).(j+2) = 'A' &&
     xmas_array.(i-3).(j+3) = 'S'
-  with Invalid_argument _ -> false
 
 let up_left_diag xmas_array i j =
-  try
+  (i-3) >= 0 && (j-3) >= 0 &&
     xmas_array.(i).(j) = 'X' &&
     xmas_array.(i-1).(j-1) = 'M' &&
     xmas_array.(i-2).(j-2) = 'A' &&
     xmas_array.(i-3).(j-3) = 'S'
-  with Invalid_argument _ -> false
 
 let down_right_diag xmas_array i j =
   try
@@ -107,6 +101,7 @@ int_of_bool (vertical arr i j) + int_of_bool (inverse_vertical arr i j) + int_of
 
 let () =  
   let lines = read_lines file in
+  let t = Sys.time() in
   let char_lines = List.map (fun x -> List.of_seq (String.to_seq x)) lines in
   let xmas_array = Array.of_list (List.map (fun line -> Array.of_list line) char_lines) in 
   let xmas_tested = Array.mapi (fun i row -> Array.mapi (fun j c -> if c = 'X' then (xmas_test xmas_array i j) else 0) row) xmas_array in
@@ -117,3 +112,4 @@ let () =
   let mas_summed = Array.fold_left (fun acc row -> Array.fold_left (+) acc row) 0 mas_tested in
   print_endline ("Xmas sum: " ^ (string_of_int xmas_summed));
   print_endline ("Mas sum: " ^ (string_of_int mas_summed));
+  Printf.printf "Execution time: %fs\n" (Sys.time() -. t);
