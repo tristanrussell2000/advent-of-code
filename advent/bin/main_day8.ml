@@ -1,7 +1,4 @@
 let file = "data8.txt"
-
-module CharMap = Map.Make(Char)
-
 let node_map  = Hashtbl.create 100
 
 let read_lines file =
