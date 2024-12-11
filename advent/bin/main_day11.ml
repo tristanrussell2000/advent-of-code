@@ -11,35 +11,6 @@ let () =
   let t = Sys.time() in
   let stone_list = List.map (fun c -> int_of_string c) (String.split_on_char ' ' line) in
   let stone_list2 = List.map (fun c -> int_of_string c) (String.split_on_char ' ' line) in
-  
-  let rec stone_change stones acc = 
-    match stones with 
-    | [] -> acc
-    | 0 :: rest -> stone_change rest (1 :: acc)
-    | x :: rest -> 
-      let xs = string_of_int x in 
-      if (String.length xs) mod 2 = 0 then
-        let half = (String.length xs) / 2 in
-        let first_half = int_of_string (String.sub xs 0 half) in
-        let second_half = int_of_string (String.sub xs half half) in
-        stone_change rest (second_half :: first_half :: acc)
-      else 
-        stone_change rest ((x * 2024) :: acc)
-  in
-
-  let rec stone_iter stones i = 
-    if i = 0 then stones 
-    else 
-      let new_stones = stone_change stones [] in 
-      let _ = print_endline ("Length of new stones: " ^ (string_of_int (List.length new_stones))) in
-      stone_iter new_stones (i-1)
-  in
-
-  print_endline ("Start of part 1");
-
-  let final_stones = stone_iter stone_list 25 in
-  let final_stones_count = List.length final_stones in
-  (* End of part 1*)
 
   let rec stone_iter_better stone i = 
     match Hashtbl.find_opt table (stone, i) with
@@ -57,8 +28,10 @@ let () =
       res
   in
 
-  print_endline ("End of part 1");
-  print_endline ("Stone list 2: " ^ (String.concat ", " (List.map string_of_int stone_list2)));
+  let final_stones = List.map (fun x -> stone_iter_better x 25) stone_list in
+  let final_stones_count = List.fold_left (+) 0 final_stones in
+  (* End of part 1*)
+
   let final_stones_75 = List.map (fun x -> stone_iter_better x 75) stone_list2 in
   let final_stones_count_75 = List.fold_left (+) 0 final_stones_75 in
 
