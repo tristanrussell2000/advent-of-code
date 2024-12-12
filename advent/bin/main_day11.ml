@@ -10,7 +10,6 @@ let () =
   let line = List.hd (read_lines file) in
   let t = Sys.time() in
   let stone_list = List.map (fun c -> int_of_string c) (String.split_on_char ' ' line) in
-  let stone_list2 = List.map (fun c -> int_of_string c) (String.split_on_char ' ' line) in
 
   let rec stone_iter_better stone i = 
     match Hashtbl.find_opt table (stone, i) with
@@ -32,7 +31,7 @@ let () =
   let final_stones_count = List.fold_left (+) 0 final_stones in
   (* End of part 1*)
 
-  let final_stones_75 = List.map (fun x -> stone_iter_better x 75) stone_list2 in
+  let final_stones_75 = List.map (fun x -> stone_iter_better x 75) stone_list in
   let final_stones_count_75 = List.fold_left (+) 0 final_stones_75 in
 
   print_endline ("Final stones count: " ^ (string_of_int final_stones_count));
