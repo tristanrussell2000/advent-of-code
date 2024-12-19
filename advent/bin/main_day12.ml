@@ -103,7 +103,7 @@ let () =
     | None -> let _ = Hashtbl.add visited_numbers c true in 
               let array_visited_bulk = Array.of_list (List.map (fun line -> Array.of_list line) char_lines) in
               let (sides, area) = explore_bulk i j c array_visited_bulk in
-              Printf.printf "Exploring %d %d %d %d\n" i j sides area;
+              (* Printf.printf "Exploring %d %d %d %d\n" i j sides area; *)
     (acc2 + (sides * area), j + 1)) (0,0) row), i+1)) (0,0) array_painted )in
 
 
