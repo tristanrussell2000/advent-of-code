@@ -1,4 +1,4 @@
 (executable
  (public_name advent)
- (name main_day13)
+ (name main_day14)
  (libraries advent str owl))
