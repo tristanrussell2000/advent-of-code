@@ -27,3 +27,20 @@ setup.log
 
 # Local OPAM switch
 _opam/
+
+# Exclude the target directory where build artifacts are stored
+target/
+
+# Exclude IDE and editor-specific files
+.idea/
+.vscode/
+*.swp
+*~
+
+# Exclude operating system specific files
+.DS_Store
+Thumbs.db
+
+# Exclude Cargo.lock if this is a library crate
+# If it's an application, Cargo.lock should typically be committed
+# Cargo.lock
