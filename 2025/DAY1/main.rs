@@ -21,12 +21,18 @@ fn main() {
             }
         };
         match &turn[0..1] {
-            "R" => { dial = (dial + num_int).rem_euclid(100); }
-            "L" => { dial = (dial - num_int).rem_euclid(100); }
+            "R" => { 
+                let zeros = (dial + num_int).div_euclid(100);
+                count_zeros += zeros;
+                dial = (dial + num_int).rem_euclid(100);
+            }
+            "L" => { 
+                let zeros = (dial - num_int).div_euclid(100).abs() - (if dial == 0 {1} else {0});
+                count_zeros += zeros;
+                dial = (dial - num_int).rem_euclid(100);
+                if dial == 0 { count_zeros += 1; }
+            }
             &_ => { println!("each line must start with R or L"); return; }
-        }
-        if dial == 0 {
-            count_zeros += 1;
         }
     }
 
