@@ -26,14 +26,17 @@ fn main() {
         };
         for i in (Range{start: low_int, end: high_int + 1}) {
             let num_string = i.to_string();
-            if num_string.len() % 2 != 0 {
-                continue;
-            }
-            let (first, second) = num_string.split_at(num_string.len() / 2);
-            if (first == second) {
-                sum_invalid += i;
-            }
+            let ns_len = num_string.len();
             
+            for j in (Range{start: 1, end: ns_len}) {
+                if ns_len % j != 0 { continue; }
+
+                let mut remainders = num_string.split(&num_string[0..j]);
+                if remainders.all(|s| s == "") {
+                    sum_invalid += i;
+                    break;
+                }
+            }
         }
     }
     println!("Number valid: {sum_invalid}");
