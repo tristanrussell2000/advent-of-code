@@ -1,4 +1,6 @@
 use std::fs;
+use std::ops::Range;
+use std::time::Instant;
 
 fn main() {
     let file_path = "./inputs/input1.txt";
@@ -6,27 +8,35 @@ fn main() {
         println!("Invalid file path!");
         return;
     };
-
+    let start = Instant::now();
     let banks = input.trim().split("\n");
     let mut total: u64 = 0;
     for bank in banks {
-        let digits: Vec<u32> = bank.chars().map(|c| c.to_digit(10).unwrap()).collect();
-        let argmax_first = (&digits[0..digits.len()-1])
-            .iter()
-            .enumerate()
-            .min_by_key(|&(_, &value)| 10 -value)
-            .map(|(idx, _)| idx)
-            .unwrap();
+        let digits: Vec<u64> = bank.chars().map(|c| c.to_digit(10).unwrap() as u64).collect();
 
-        let argmax_second = (&digits[argmax_first+1..])
-            .iter().enumerate()
-            .min_by_key(|&(_, &value)| 10 -value)
-            .map(|(idx, _)| idx)
-            .unwrap();
+        let mut it = 0;
+        //let mut num_str = String::new();
+        let mut num: u64 = 0;
 
-        let comb: u64 = (digits[argmax_first].to_string() + &digits[argmax_second + argmax_first + 1].to_string()).parse().unwrap();
-        total += comb;
+        for i in (0..12).rev() {
+            // Need to leave room for next iterators
+            let end = digits.len() - i;
+            let argmax = (&digits[it..end])
+                .iter().enumerate()
+                // Cursed, but max_by_key returns the *last* index of that value, min_by_key
+                // returns the first which is what we want
+                .min_by_key(|&(_, &value)| 10 - value)
+                .map(|(idx, _)| idx)
+                .unwrap();
+            it += argmax + 1;
+            num += (digits[it-1] * 10_u64.pow(i as u32)) as u64;
+           // num_str.push_str(&digits[it-1].to_string());
+        }
+
+        //let comb: u64 = num_str.parse().unwrap();
+        total += num;
     }
-
+    let duration = start.elapsed(); // Calculate the elapsed time
+    println!("Elapsed time: {:?}", duration);
     println!("{total}");
 }
