@@ -1,5 +1,4 @@
 use std::fs;
-use std::ops::Range;
 use std::time::Instant;
 
 fn main() {
@@ -15,8 +14,7 @@ fn main() {
         let digits: Vec<u64> = bank.chars().map(|c| c.to_digit(10).unwrap() as u64).collect();
 
         let mut it = 0;
-        //let mut num_str = String::new();
-        let mut num: u64 = 0;
+        let mut num_str = String::new();
 
         for i in (0..12).rev() {
             // Need to leave room for next iterators
@@ -29,12 +27,11 @@ fn main() {
                 .map(|(idx, _)| idx)
                 .unwrap();
             it += argmax + 1;
-            num += (digits[it-1] * 10_u64.pow(i as u32)) as u64;
-           // num_str.push_str(&digits[it-1].to_string());
+            num_str.push_str(&digits[it-1].to_string());
         }
 
-        //let comb: u64 = num_str.parse().unwrap();
-        total += num;
+        let comb: u64 = num_str.parse().unwrap();
+        total += comb;
     }
     let duration = start.elapsed(); // Calculate the elapsed time
     println!("Elapsed time: {:?}", duration);
