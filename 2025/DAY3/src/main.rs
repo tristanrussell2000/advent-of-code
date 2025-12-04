@@ -3,11 +3,12 @@ use std::time::Instant;
 
 fn main() {
     let file_path = "./inputs/input1.txt";
+    let start = Instant::now();
     let Ok(input) = fs::read_to_string(file_path) else {
         println!("Invalid file path!");
         return;
     };
-    let start = Instant::now();
+    
     let banks = input.trim().split("\n");
     let mut total: u64 = 0;
     for bank in banks {
