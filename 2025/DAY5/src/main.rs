@@ -1,18 +1,13 @@
-use std::{env, fs};
+use std::{fs};
+use std::cmp::max;
 use std::time::Instant;
 
-fn check_ranges(id: u64, ranges: &Vec<(u64, u64)>) -> u32 {
-    for &(start, end) in ranges.iter() {
-       if id >= start && id <= end {
-           return 1;
-       }
+fn print_ranges(ranges: &Vec<(u64, u64)>) {
+    for range in ranges {
+        println!("{}, {}", range.0, range.1)
     }
-    0
 }
-
 fn main() {
-    //let args: Vec<String> = env::args().collect();
-
     let file_path = "./inputs/input1.txt";
     let start = Instant::now();
     let input = fs::read_to_string(file_path).unwrap();
@@ -20,25 +15,44 @@ fn main() {
     let mut parts = input.trim().split("\n\n");
 
     let ranges = parts.next().unwrap();
-    let ingredients = parts.next().unwrap();
 
-    let ranges_conv: Vec<(u64, u64)>= ranges.split("\n").map(|range| {
+    let mut ranges_conv: Vec<(u64, u64)>= ranges.split("\n").map(|range| {
         let mut ends = range.split("-");
         let start = ends.next().unwrap().parse::<u64>().unwrap();
         let end = ends.next().unwrap().parse::<u64>().unwrap();
         (start, end)
     }).collect();
+    ranges_conv.sort_by_key(|&(start, _)| start);
 
-    let ids: Vec<u64> = ingredients.split("\n").map(|id| {
-        id.parse::<u64>().unwrap()
-    }).collect();
-    let num_ids = ids.len();
+    //print_ranges(&ranges_conv);
+    //println!("\n Dividing \n");
 
-    // Sanity check on output
-    println!("Number of Ids: {num_ids}");
+    let n = ranges_conv.len();
 
-    let num_fresh = ids.iter().fold(0, |acc, &id| {
-        acc + check_ranges(id, &ranges_conv)
+    let mut new_ranges: Vec<(u64, u64)> = Vec::new();
+
+    let mut i = 0;
+    while i < n {
+        let (start, end) = ranges_conv[i];
+        let mut end = end;
+
+        let mut j = i + 1;
+        while j < n {
+            let (start_ahead, end_ahead) = ranges_conv[j];
+            if end >= start_ahead {
+                end = max(end_ahead, end);
+                j += 1;
+            } else {break;}
+        }
+
+        i = j;
+        new_ranges.push((start, end));
+    }
+
+    //print_ranges(&new_ranges);
+
+    let num_fresh = new_ranges.iter().fold(0, |acc, &(start, end)| {
+        acc + (end - start + 1)
     });
 
     let duration = start.elapsed();
