@@ -2,11 +2,6 @@ use std::{fs};
 use std::cmp::max;
 use std::time::Instant;
 
-fn print_ranges(ranges: &Vec<(u64, u64)>) {
-    for range in ranges {
-        println!("{}, {}", range.0, range.1)
-    }
-}
 fn main() {
     let file_path = "./inputs/input1.txt";
     let start = Instant::now();
@@ -24,13 +19,9 @@ fn main() {
     }).collect();
     ranges_conv.sort_by_key(|&(start, _)| start);
 
-    //print_ranges(&ranges_conv);
-    //println!("\n Dividing \n");
-
     let n = ranges_conv.len();
 
-    let mut new_ranges: Vec<(u64, u64)> = Vec::new();
-
+    let mut total = 0;
     let mut i = 0;
     while i < n {
         let (start, end) = ranges_conv[i];
@@ -46,16 +37,10 @@ fn main() {
         }
 
         i = j;
-        new_ranges.push((start, end));
+        total += end - start + 1;
     }
-
-    //print_ranges(&new_ranges);
-
-    let num_fresh = new_ranges.iter().fold(0, |acc, &(start, end)| {
-        acc + (end - start + 1)
-    });
 
     let duration = start.elapsed();
     println!("Elapsed time: {:?}", duration);
-    println!("Fresh: {}", num_fresh);
+    println!("Fresh: {}", total);
 }
