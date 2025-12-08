@@ -72,29 +72,20 @@ fn main() {
     }
     
     let mut sets = DisjointSet::with_len(num_points);
-    
+    let mut num_joined = 0;
     loop {
         let PointDist {p1, p2, dist: _} = point_pairs_heap.pop().unwrap();
-        sets.join(p1, p2);
-        if sets.sets().len() == 1 {
-            let point1 = &points[p1];
-            let point2 = &points[p2];
-            println!("X Multiplied {}", point1.0 * point2.0);
-            break;
+        if sets.join(p1, p2) {
+            num_joined += 1;
+            if num_joined == num_points - 1 {
+                let point1 = &points[p1];
+                let point2 = &points[p2];
+                println!("X Multiplied {}", point1.0 * point2.0);
+                break;
+            }
         }
     }
 
     let duration = start.elapsed();
     println!("Elapsed time: {:?}", duration);
-    let mut occurrences = vec![0; num_points];
-    (0..num_points).for_each(|i| {
-        occurrences[sets.root_of(i)] += 1;
-    });
-    occurrences.sort();
-    let last = occurrences[num_points-1];
-    let second_last = occurrences[num_points-2];
-    let third_last = occurrences[num_points-3];
-    
-    
-    println!("Total: {}", last * second_last * third_last);
 }
