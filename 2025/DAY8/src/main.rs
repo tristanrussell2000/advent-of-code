@@ -73,7 +73,7 @@ fn main() {
     
     let mut sets = DisjointSet::with_len(num_points);
     
-    for _ in 0..point_pairs_heap.len() {
+    loop {
         let PointDist {p1, p2, dist: _} = point_pairs_heap.pop().unwrap();
         sets.join(p1, p2);
         if sets.sets().len() == 1 {
