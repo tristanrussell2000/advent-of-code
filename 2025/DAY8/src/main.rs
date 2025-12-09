@@ -45,8 +45,8 @@ impl PartialOrd for PointDist {
 }
 
 fn main() {
-    let file_path = "./inputs/input1.txt";
     let start = Instant::now();
+    let file_path = "./inputs/input1.txt";
     let input = fs::read_to_string(file_path).unwrap();
     
     let points: Vec<Point> = input.trim().split("\n").map(|row| {
@@ -56,7 +56,7 @@ fn main() {
             _ => panic!(),
         }
     }).collect();
-
+    
     let num_points = points.len();
     
     let point_pairs: Vec<PointDist> = points.clone().iter().enumerate().flat_map(|(idx, p1)| {
