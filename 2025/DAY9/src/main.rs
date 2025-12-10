@@ -2,27 +2,14 @@ use std::fs;
 use std::time::Instant;
 use geo::{Coord, Intersects, Line, Rect};
 
-fn valid_area(p1: &Coord, p2: &Coord, points: &Vec<Coord>) -> bool {
+fn valid_area(p1: &Coord, p2: &Coord, lines: &Vec<Line>) -> bool {
     let top_left = Coord {x: p1.x.min(p2.x) , y: p1.y.max(p2.y) };
     let bottom_right = Coord {x: p1.x.max(p2.x) , y: p1.y.min(p2.y) };
     let rect = Rect::new(Coord {x: top_left.x + 0.001, y: top_left.y - 0.001}, Coord { x: bottom_right.x - 0.001, y: bottom_right.y +0.001});
-    for p in points.windows(2) {
-        match p {
-            [p, p2] => {
-                let l = Line::new(*p, *p2);
-                    if l.intersects(&rect) {
-                        return false
-                    } 
-            },
-            _ => continue
+    for line in lines {
+        if line.intersects(&rect) {
+            return false
         }
-    }
-    
-    let p = &points[points.len() - 1];
-    let p2 = &points[0];
-    let l = Line::new(*p, *p2);
-    if l.intersects(&rect) {
-        return false
     }
     true
 }
@@ -44,12 +31,22 @@ fn main() {
         }
     }).collect();
     
+    let mut lines: Vec<Line> = points.windows(2).map(|p| {
+        match p {
+            [p, p2] => {
+                Line::new(p.clone(), p2.clone())
+            },
+            _ => {panic!();}
+        }
+    }).collect();
+    lines.push(Line::new(points[points.len() - 1].clone(), points[0].clone()));
+    
     let mut max_area: i64 = 0;
     let mut max_p1 = Coord {x: 0.0, y: 0.0};
     let mut max_2 = Coord {x: 0.0, y: 0.0};
     for (idx, p1) in points.iter().enumerate() {
         for (_, p2) in points[idx+1..].iter().enumerate() {
-            if !valid_area(p1, p2, &points) { continue; };
+            if !valid_area(p1, p2, &lines) { continue; };
             
             let area = calc_area(p1, p2);
             if area > max_area { max_area = area; max_p1 = p1.clone(); max_2 = p2.clone(); }
