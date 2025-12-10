@@ -1,64 +1,71 @@
-use std::collections::HashMap;
 use std::fs;
+use std::ops::Add;
 use std::time::Instant;
+use good_lp::{constraint, Solution, SolverModel, variable, ProblemVariables, Variable, Expression};
+use good_lp::lp_solve;
 
-fn solve_problem(curr: u16, goal: u16, buttons: Vec<u16>, sol_hash: &mut HashMap<(u16, Vec<u16>), u64>) -> u64 {
-    if let Some(min) = sol_hash.get(&(curr, buttons.clone())) {
-        return *min;
-    }
-    let mut min_uses = u64::MAX;
-    if goal == curr { 
-        return 0 
-    };
-    for (i, &button) in buttons.iter().enumerate() {
-        let new_buttons: Vec<u16> = buttons.iter().enumerate().filter(|(i2, _)| *i2 != i).map(|(_, &val)| val).collect();
-        //println!("{:?}", new_buttons);
-        let uses = solve_problem(curr ^ button, goal, new_buttons, sol_hash);
-        let uses = if uses == u64::MAX {uses} else {uses + 1};
-        if uses < min_uses { min_uses = uses; }
-    }
-    sol_hash.insert((curr, buttons), min_uses);
-    min_uses
-}
 fn main() {
     let start = Instant::now();
     let file_path = "./inputs/input1.txt";
     let input = fs::read_to_string(file_path).unwrap();
 
-    let problems: Vec<(u16, Vec<u16>)> = input.split("\n").map(|line| {
-        let mut pattern_rest = line.split("]");
-        let pattern_bytes = pattern_rest.next().unwrap().bytes().collect::<Vec<_>>();
+    let problems: Vec<(Vec<Vec<f64>>, Vec<f64>)> = input.split("\n").map(|line| {
+        let mut remove_pattern = line.split("]");
+        // [.#...
+        remove_pattern.next();
+        // (0,1, .. 1,2) |split| {10,11...
+        let mut voltage_split = remove_pattern.next().unwrap().split("{");
+
+        let button_string = voltage_split.next().unwrap();
+
+        // Get rid of trailing bracket
+        let voltages_string = voltage_split.next().unwrap()
+            .split("}").next().unwrap();
+
+        let voltages: Vec<f64> = voltages_string.split(",").map(|s| {
+            s.parse::<f64>().unwrap()
+        }).collect();
         
-        let pattern = match &pattern_bytes[..] {
-            [b'[', rest @ ..] => {
-                let mut bit_map: u16 = 0;
-                rest.iter().enumerate().for_each(|(i, &b)| { 
-                    if b == b'#' { bit_map |= 1u16 << i }
-                });
-                bit_map
-            },
-            _ => panic!()
-        };
-        let buttons_slices: Vec<u16> = pattern_rest.next().unwrap()
-            .split("{").next().unwrap().trim()
+        let num_voltages = voltages.len();
+        
+        // (0,1, .. 1,2)
+        let buttons: Vec<Vec<f64>> = button_string
+            .trim()
             .split(" ").map(|button_str| {
-            let mut bit_map: u16 = 0;
-            (button_str[1..button_str.len() - 1]).split(",").map(|b| b.parse::<u8>().unwrap()).for_each(|u| {
-                bit_map |= 1u16 << u;
-            });
-            bit_map
+            let mut button_idx = vec![0_f64; num_voltages];
+            // Insert 0s where no addition, 1 in index where it adds
+            button_str[1..button_str.len() - 1].split(",").map(|b| b.parse::<f64>().unwrap()).for_each(|idx| {button_idx[idx as usize] += 1.0;});
+            button_idx
         }).collect();
 
-        (pattern, buttons_slices)
+        (buttons, voltages)
     }).collect();
-    
-    let mut total = 0;
-    for (pattern, buttons) in problems {
-        let mut sol_hash: HashMap<(u16, Vec<u16>), u64> = HashMap::new();
-        total += solve_problem(0, pattern, buttons, &mut sol_hash);
+
+    let mut total: f64 = 0.0;
+    for (buttons, voltages) in problems {
+        let num_buttons = buttons.len();
+        let mut all_vars = ProblemVariables::new();
+
+        let vars: Vec<Variable> = (0..num_buttons).map(|_| {
+            all_vars.add(variable().min(0).integer())
+        }).collect();
+        let expr = vars.iter().fold(Expression::with_capacity(vars.len()), |acc,expr| acc.add(expr));
+        let mut problem = all_vars.minimise(expr).using(lp_solve);
+        for (i, &voltage) in voltages.iter().enumerate() {
+            let mut expr = Expression::from_other_affine(0.);
+            for (j, button) in buttons.iter().enumerate() {
+                expr += vars[j] * button[i];
+            }
+            let constraint = constraint!(expr == voltage);
+            problem.add_constraint(constraint);
+        }
+        let sol = problem.solve().unwrap();
+        for var in vars {
+            total += sol.value(var);
+        }
     }
 
     let duration = start.elapsed();
     println!("Elapsed time: {:?}", duration);
-    println!("Total: {:?}", total);
+    println!("Total solutions: {}", total);
 }

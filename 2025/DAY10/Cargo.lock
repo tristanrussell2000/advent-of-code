@@ -5,3 +5,109 @@ version = 4
 [[package]]
 name = "DAY10"
 version = "0.1.0"
+dependencies = [
+ "good_lp",
+]
+
+[[package]]
+name = "bitflags"
+version = "2.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "812e12b5285cc515a9c72a5c1d3b6d46a19dac5acfef5265968c166106e31dd3"
+
+[[package]]
+name = "cc"
+version = "1.2.49"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "90583009037521a116abf44494efecd645ba48b6622457080f080b85544e2215"
+dependencies = [
+ "find-msvc-tools",
+ "shlex",
+]
+
+[[package]]
+name = "coin_cbc"
+version = "0.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d602045cd2e7ad02608a71492af94357f493a6f3c934ce854c03bf10fddc5780"
+dependencies = [
+ "coin_cbc_sys",
+ "lazy_static",
+]
+
+[[package]]
+name = "coin_cbc_sys"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "085619f8bdc38e24e25c6336ecc3f2e6c0543d67566dff6daef0e32f7ac20f76"
+dependencies = [
+ "pkg-config",
+]
+
+[[package]]
+name = "find-msvc-tools"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a3076410a55c90011c298b04d0cfa770b00fa04e1e3c97d3f6c9de105a03844"
+
+[[package]]
+name = "fnv"
+version = "1.0.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
+
+[[package]]
+name = "good_lp"
+version = "1.14.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "776aa1ba88ac058e78408c17f4dbff826a51ae08ed6642f71ca0edd7fe9383f3"
+dependencies = [
+ "coin_cbc",
+ "fnv",
+ "lpsolve",
+]
+
+[[package]]
+name = "lazy_static"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
+
+[[package]]
+name = "libc"
+version = "0.2.178"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "37c93d8daa9d8a012fd8ab92f088405fb202ea0b6ab73ee2482ae66af4f42091"
+
+[[package]]
+name = "lpsolve"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d5be7defc573a2f5ca0542e5a4462bb19c23e164bd3d564f2be8bad725fd4283"
+dependencies = [
+ "bitflags",
+ "libc",
+ "lpsolve-sys",
+]
+
+[[package]]
+name = "lpsolve-sys"
+version = "5.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77814adc38034868c16aaa7d6438fac093f3b090d78f6348b96f70b372349a6d"
+dependencies = [
+ "cc",
+ "libc",
+]
+
+[[package]]
+name = "pkg-config"
+version = "0.3.32"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7edddbd0b52d732b21ad9a5fab5c704c14cd949e5e9a1ec5929a24fded1b904c"
+
+[[package]]
+name = "shlex"
+version = "1.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
